@@ -10,7 +10,7 @@ app.use(cors())
 
 app.use('/auth', UserRouter)
 
-mongoose.connect("" , {
+mongoose.connect("", {
     dbName:"recipeApp"
 }).then(() => console.log("Connect to db"))
 .catch((e) => console.log(e) )
