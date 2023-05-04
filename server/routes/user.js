@@ -7,14 +7,14 @@ const router = express.Router();
 
 router.post('/register',async (req,res) => {
    const {username , password} = req.body;
-
+ 
     const user = await UserModel.findOne({username: username})
 
     if(user){
         return res.json({message:"User already Exists"})
     }
     const hashedpassword = await bcrypt.hash(password,10)
-    const newuser = new UserModel({username : username, password : hashedpassword})
+    const newuser = new UserModel({username : username, password:hashedpassword})
     await newuser.save()
 
     res.json({message:"User successfully registered"});
@@ -30,14 +30,13 @@ router.post('/login',async (req,res) => {
   }
    
    const ispasswordvalid = await bcrypt.compare(password,user?.password)
-  if(!ispasswordvalid){
+   if(!ispasswordvalid){
     res.json({message:"Password or username incorrect "})
   }
 
   const token = jwt.sign({id : user._id } , "secret");
   res.json({token , userID : user._id });
-
+  
 })
-
 
 export {router as UserRouter} 

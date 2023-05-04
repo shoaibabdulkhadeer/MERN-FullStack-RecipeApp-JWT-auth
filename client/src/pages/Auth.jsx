@@ -1,23 +1,41 @@
 import React, { useState } from 'react'
 import axios from 'axios'
+import {useCookies} from 'react-cookie'
+import { useNavigate } from 'react-router-dom'
 
 const Auth = () => {
- 
+  
 const [loginuser,setLoginuser] = useState("")
 const [loginpassword,setLoginpassword] = useState("")
 
 const [registeruser ,setRegisteruser] = useState("")
 const [registerpassword,setRegisterpassword] = useState("")
 
-const login  = (event) => {
+const [, setCookies] = useCookies(["access_token"])
+const navigate = useNavigate()
+
+const login  = async (event) => {
     event.preventDefault()
- console.log(loginuser,loginpassword)
+  try{ 
+       const response = await axios.post("http://localhost:4000/auth/login",{
+         username:loginuser,
+         password:loginpassword
+       })
+
+       setCookies("access_token",response.data.token)
+       window.localStorage.setItem("userID",response.data.userID)
+       setLoginuser("")
+       setLoginpassword("")
+       navigate("/")
+  }catch(err){
+    console.log(err)
+  }
 }
 
 const register = async (event) => {
     event.preventDefault()
     try{
-       axios.post('http://localhost:4000/auth/register',{
+        axios.post('http://localhost:4000/auth/register',{
         username:registeruser,
         password:registerpassword,
        }) 
@@ -26,11 +44,10 @@ const register = async (event) => {
        setRegisterpassword("")
     }catch(err){
       console.error(err)
-    }
+    }  
 }
 
-
-  return (
+ return (
     <div style={{display:"flex",width:"100%",justifyContent:"space-around"}}>
         
        <div>
@@ -40,8 +57,7 @@ const register = async (event) => {
          <input onChange={(event => setLoginpassword(event.target.value))} value={loginpassword} type="text" placeholder='password' />
          <button>Login</button>
         </form> 
-        
-        </div> 
+      </div> 
 
 
         <div>
@@ -51,7 +67,6 @@ const register = async (event) => {
               <input onChange={(event => setRegisterpassword(event.target.value))} value={registerpassword} type="text" placeholder='password' />
               <button>Register</button>
              </form>
-
         </div>
   
 
