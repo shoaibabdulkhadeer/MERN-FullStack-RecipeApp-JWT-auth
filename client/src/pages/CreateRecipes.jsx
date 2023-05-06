@@ -1,18 +1,22 @@
 import React, { useState } from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
+import { useGetUserID } from "../hooks/useGetUserID";
+import { useCookies } from 'react-cookie';
+
 
 
 const CreateRecipes = () => {
-  
+  const userID = useGetUserID();
 const [name, setName] = useState("")
 const [ingredients,setIngredients] = useState("")
 const [instructions,setInstructions] = useState("")
 const [imageUrl,setImageUrl] = useState("")
 const [cookingTime,setCookingTime] = useState("")
 
+const [cookies,] = useCookies(["access_token"])
 
-const userId = window.localStorage.getItem("userID")
+
 const navigate = useNavigate()
 
 const submit = async(event) => {
@@ -23,9 +27,10 @@ const submit = async(event) => {
    instructions,
    imageUrl,
    cookingTime,
-   userOwner:userId
-
- }).then((response) => {
+   userOwner:userID
+ },
+ {headers:{authorization:cookies.access_token}}
+ ).then((response) => {
   alert("successfully submitted")
  })
  navigate('/')
